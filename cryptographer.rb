@@ -1,4 +1,3 @@
-require 'pry'
 
 class Encryptor
   attr_accessor :message
@@ -20,13 +19,13 @@ class EncryptionEngine
 
     encrypt_hash = Hash.new
 
-    a = ('a'..'z').to_a
-    b = a.rotate(13)
-    h = Hash[a.zip(b)]
+   alphabet_lowercase = ('a'..'z').to_a
+   	alphabet_lowercase_rotated = alphabet_lowercase.rotate(13)
+    alphabet_lowercase_combined = Hash[alphabet_lowercase.zip(alphabet_lowercase_rotated)]
 
-    c = ('A'..'Z').to_a
-    d = c.rotate(13)
-    h2 = Hash[c.zip(d)]
+    alphabet_uppercase = ('A'..'Z').to_a
+    alphabet_uppercase_rotated = alphabet_uppercase.rotate(13)
+    alphabet_uppercase_combined = Hash[alphabet_uppercase.zip(alphabet_uppercase_rotated)]
 
 
     encryption = []
@@ -35,9 +34,9 @@ class EncryptionEngine
       if char == " "
         encryption << " "
       elsif char == char.upcase
-        encryption << h2[char]
+        encryption << alphabet_uppercase_combined[char]
       else
-        encryption << h[char]
+        encryption << alphabet_lowercase_combined[char]
       end
     end
 
