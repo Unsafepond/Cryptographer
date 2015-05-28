@@ -31,9 +31,13 @@ end
 
 class EncryptionEngine
 
-	def encrypt(message, key_size)
-		message.length
-		Encryptor.encrypt(message, key_size)
+	def encrypt(message, key_size=0)
+		shuffled_key = []
+		message.length.times do
+			shuffled_key << rand(26)
+		end
+
+		Encryptor.encrypt(message, shuffled_key)
 
 	end
 
