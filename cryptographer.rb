@@ -2,29 +2,35 @@ require 'pry'
 
 class Encryptor
 
-	def self.encrypt(message, key_size)
+	def self.encrypt(message, shuffled_key)
 
-	   alphabet_lowercase = ('a'..'z').to_a
-	   	alphabet_lowercase_rotated = alphabet_lowercase.rotate(key_size)
-	    alphabet_lowercase_combined = Hash[alphabet_lowercase.zip(alphabet_lowercase_rotated)]
+		shuffled_key.map do |key|
+		   	alphabet_lowercase = ('a'..'z').to_a
+		   	alphabet_lowercase_rotated = alphabet_lowercase.rotate(key)
+		    alphabet_lowercase_combined = Hash[alphabet_lowercase.zip(alphabet_lowercase_rotated)]
+		    @alphabet_lowercase_combined = alphabet_lowercase_combined
 
-	    alphabet_uppercase = ('A'..'Z').to_a
-	    alphabet_uppercase_rotated = alphabet_uppercase.rotate(key_size)
-	    alphabet_uppercase_combined = Hash[alphabet_uppercase.zip(alphabet_uppercase_rotated)]
-
+		    alphabet_uppercase = ('A'..'Z').to_a
+		    alphabet_uppercase_rotated = alphabet_uppercase.rotate(key)
+		    alphabet_uppercase_combined = Hash[alphabet_uppercase.zip(alphabet_uppercase_rotated)]
+		    @alphabet_uppercase_combined = alphabet_uppercase_combined
+		    end
 	    encryption = []
 	    characters = message.split("")
 	    characters.each do |char|
 	      if char == " "
 	        encryption << " "
 	      elsif char == char.upcase
-	        encryption << alphabet_uppercase_combined[char]
+	        encryption << @alphabet_uppercase_combined[char]
 	      else
-	        encryption << alphabet_lowercase_combined[char]
+	        encryption << @alphabet_lowercase_combined[char]
 	      end
 	    end
+
 	    puts encryption.join
+	    Decryptor.decrypt(encryption.join, shuffled_key)
 	    encryption.join
+
 	end
 
 end
@@ -32,17 +38,19 @@ end
 class EncryptionEngine
 
 	def encrypt(message, key_size=0)
-		shuffled_key = []
+		@shuffled_key = []
 		message.length.times do
-			shuffled_key << rand(26)
+			@shuffled_key << rand(26)
 		end
-
+		shuffled_key = @shuffled_key
+		@message = message
 		Encryptor.encrypt(message, shuffled_key)
 
 	end
 
-	def decrypt(message, key_size)
-		Decryptor.decrypt(message, key_size)
+	def decrypt(message, key_size=0)
+		# shuffled_key = @shuffled_key
+		# Decryptor.decrypt(message, shuffled_key)
 	end
 
 end
@@ -50,25 +58,25 @@ end
 
 class Decryptor
 
-	def self.decrypt(message, key_size)
-
+	def self.decrypt(message, shuffled_key)
+		shuffled_key.map do |key|
 	   alphabet_lowercase = ('a'..'z').to_a
-	   	alphabet_lowercase_rotated = alphabet_lowercase.rotate(-key_size)
-	    alphabet_lowercase_combined = Hash[alphabet_lowercase.zip(alphabet_lowercase_rotated)]
+	   	alphabet_lowercase_rotated = alphabet_lowercase.rotate(-key)
+	    @alphabet_lowercase_combined = Hash[alphabet_lowercase.zip(alphabet_lowercase_rotated)]
 
 	    alphabet_uppercase = ('A'..'Z').to_a
-	    alphabet_uppercase_rotated = alphabet_uppercase.rotate(-key_size)
-	    alphabet_uppercase_combined = Hash[alphabet_uppercase.zip(alphabet_uppercase_rotated)]
-
+	    alphabet_uppercase_rotated = alphabet_uppercase.rotate(-key)
+	    @alphabet_uppercase_combined = Hash[alphabet_uppercase.zip(alphabet_uppercase_rotated)]
+	end
 	    decryption = []
 	    characters = message.split("")
 	    characters.each do |char|
 	      if char == " "
 	        decryption << " "
 	      elsif char == char.upcase
-	        decryption << alphabet_uppercase_combined[char]
+	        decryption << @alphabet_uppercase_combined[char]
 	      else
-	        decryption << alphabet_lowercase_combined[char]
+	        decryption << @alphabet_lowercase_combined[char]
 	      end
 	    end
 	    puts decryption.join
